@@ -1,6 +1,8 @@
-# Unsafe Website - Security Testing Platform
+# Super Unsafe Website - Security Testing Platform
 
 ⚠️ **WARNING**: This website contains **intentional security vulnerabilities** for testing security detection tools. Do NOT use this code in production!
+
+This repository is designed to help test and train AI-powered security detection tools by providing a realistic web application with multiple common security vulnerabilities. The website is intentionally insecure for educational and testing purposes only.
 
 ## Vulnerabilities Included
 
@@ -85,10 +87,19 @@ unsafe-website/
 2. Click "Load All Users" or "Load Configuration"
 3. Access sensitive data without any login
 
+## Repository
+
+This repository is available at: [https://github.com/sahilsait/super-unsafe-website](https://github.com/sahilsait/super-unsafe-website)
+
 ## Notes
 
 - This is a demonstration website only
 - All vulnerabilities are intentional
 - Do not deploy this to any public server
 - Use only for security testing and education purposes
+- Perfect for testing AI security scanning tools and vulnerability detection systems
+
+## License
+
+This project is for educational and testing purposes only. Use at your own risk.
 
