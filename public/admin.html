@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - DevTools Pro</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">DevTools Pro</h1>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="chat.html">AI Assistant</a></li>
+                <li><a href="community.html">Community</a></li>
+                <li><a href="admin.html">Admin Panel</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="admin-section">
+            <h2>Admin Panel</h2>
+            <p class="subtitle">Manage users and system settings</p>
+
+            <div class="info-box warning">
+                <h4>⚠️ Missing Authentication:</h4>
+                <p>This admin panel is accessible without any authentication. Anyone can access it!</p>
+            </div>
+
+            <div class="admin-panel">
+                <div class="admin-section-card">
+                    <h3>System Configuration</h3>
+                    <button id="load-config" class="btn">Load Configuration</button>
+                    <div id="config-display" class="config-display"></div>
+                </div>
+
+                <div class="admin-section-card">
+                    <h3>User Management</h3>
+                    <button id="load-users" class="btn">Load All Users</button>
+                    <div id="users-display" class="users-display"></div>
+                </div>
+
+                <div class="admin-section-card">
+                    <h3>Danger Zone</h3>
+                    <p>Delete users (no authentication required!)</p>
+                    <input type="number" id="delete-user-id" class="input-field" placeholder="User ID">
+                    <button id="delete-user" class="btn btn-danger">Delete User</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 DevTools Pro. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Hardcoded admin credentials in client-side code
+        const ADMIN_USERNAME = 'admin';
+        const ADMIN_PASSWORD = 'SuperSecretPassword123!';
+        const SECRET_API_KEY = 'sk-1234567890abcdefghijklmnopqrstuvwxyz';
+
+        const loadConfigBtn = document.getElementById('load-config');
+        const loadUsersBtn = document.getElementById('load-users');
+        const deleteUserBtn = document.getElementById('delete-user');
+        const configDisplay = document.getElementById('config-display');
+        const usersDisplay = document.getElementById('users-display');
+        const deleteUserIdInput = document.getElementById('delete-user-id');
+
+        loadConfigBtn.addEventListener('click', () => {
+            // Missing authentication - directly accessing sensitive config
+            fetch('http://localhost:3000/api/config')
+                .then(res => res.json())
+                .then(config => {
+                    configDisplay.innerHTML = `
+                        <h4>System Configuration:</h4>
+                        <pre>${JSON.stringify(config, null, 2)}</pre>
+                    `;
+                })
+                .catch(err => {
+                    configDisplay.innerHTML = `<p class="error">Error loading config: ${err.message}</p>`;
+                });
+        });
+
+        loadUsersBtn.addEventListener('click', () => {
+            // Missing authentication - directly accessing user data
+            fetch('http://localhost:3000/api/users')
+                .then(res => res.json())
+                .then(users => {
+                    usersDisplay.innerHTML = `
+                        <h4>All Users:</h4>
+                        <table class="users-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${users.map(user => `
+                                    <tr>
+                                        <td>${user.id}</td>
+                                        <td>${user.username}</td>
+                                        <td>${user.email}</td>
+                                        <td>${user.role}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                })
+                .catch(err => {
+                    usersDisplay.innerHTML = `<p class="error">Error loading users: ${err.message}</p>`;
+                });
+        });
+
+        deleteUserBtn.addEventListener('click', () => {
+            const userId = deleteUserIdInput.value;
+            if (!userId) {
+                alert('Please enter a user ID');
+                return;
+            }
+
+            // Missing authentication - anyone can delete users!
+            fetch(`http://localhost:3000/api/users/${userId}`, {
+                method: 'DELETE'
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message || 'User deleted successfully');
+                deleteUserIdInput.value = '';
+                loadUsersBtn.click();
+            })
+            .catch(err => {
+                alert('Error deleting user: ' + err.message);
+            });
+        });
+    </script>
+</body>
+</html>
+

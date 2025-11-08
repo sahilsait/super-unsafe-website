@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community - DevTools Pro</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">DevTools Pro</h1>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="chat.html">AI Assistant</a></li>
+                <li><a href="community.html">Community</a></li>
+                <li><a href="admin.html">Admin Panel</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="community-section">
+            <h2>Developer Community</h2>
+            <p class="subtitle">Share your thoughts and connect with fellow developers</p>
+
+            <div class="comment-form">
+                <h3>Leave a Comment</h3>
+                <input type="text" id="username-input" class="input-field" placeholder="Your name">
+                <textarea id="comment-input" class="textarea-field" placeholder="Write your comment here..."></textarea>
+                <button id="submit-comment" class="btn">Post Comment</button>
+            </div>
+
+            <div class="comments-section">
+                <h3>Recent Comments</h3>
+                <div id="comments-container"></div>
+            </div>
+
+            <div class="info-box">
+                <h4>⚠️ XSS Vulnerability Demo:</h4>
+                <p>Try posting: <code>&lt;script&gt;alert('XSS!')&lt;/script&gt;</code></p>
+                <p>Or: <code>&lt;img src=x onerror="alert('XSS')"&gt;</code></p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 DevTools Pro. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Hardcoded credentials
+        const API_KEY = 'sk-1234567890abcdefghijklmnopqrstuvwxyz';
+        const DATABASE_URL = 'mongodb://admin:password123@localhost:27017/devtools';
+
+        const commentsContainer = document.getElementById('comments-container');
+        const usernameInput = document.getElementById('username-input');
+        const commentInput = document.getElementById('comment-input');
+        const submitBtn = document.getElementById('submit-comment');
+
+        function loadComments() {
+            fetch('http://localhost:3000/api/comments')
+                .then(res => res.json())
+                .then(comments => {
+                    commentsContainer.innerHTML = '';
+                    comments.forEach(comment => {
+                        const commentDiv = document.createElement('div');
+                        commentDiv.className = 'comment';
+                        // XSS VULNERABILITY: Directly inserting user input without sanitization
+                        commentDiv.innerHTML = `
+                            <div class="comment-header">
+                                <strong>${comment.username}</strong>
+                                <span class="comment-time">${new Date(comment.timestamp).toLocaleString()}</span>
+                            </div>
+                            <div class="comment-body">${comment.comment}</div>
+                        `;
+                        commentsContainer.appendChild(commentDiv);
+                    });
+                })
+                .catch(err => {
+                    console.error('Error loading comments:', err);
+                });
+        }
+
+        submitBtn.addEventListener('click', () => {
+            const username = usernameInput.value.trim();
+            const comment = commentInput.value.trim();
+
+            if (!comment) {
+                alert('Please enter a comment');
+                return;
+            }
+
+            fetch('http://localhost:3000/api/comments', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username || 'Anonymous',
+                    comment: comment // No sanitization - XSS vulnerability
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    usernameInput.value = '';
+                    commentInput.value = '';
+                    loadComments();
+                }
+            })
+            .catch(err => {
+                console.error('Error posting comment:', err);
+            });
+        });
+
+        loadComments();
+    </script>
+</body>
+</html>
+
